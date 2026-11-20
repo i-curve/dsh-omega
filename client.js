@@ -31,6 +31,7 @@ window.__ModuleLoader__.load({
         builtin: 'Built-in',
         addProxy: 'Proxy server',
         addSwitch: 'Automatic switch',
+        addRuleList: 'Rule list',
         addRule: 'Add rule',
         defaultProfile: 'Default profile',
         rules: 'Switching rules',
@@ -215,6 +216,7 @@ window.__ModuleLoader__.load({
         builtin: '内置',
         addProxy: '新建代理服务器',
         addSwitch: '新建自动切换',
+        addRuleList: '新建规则列表',
         addRule: '添加规则',
         defaultProfile: '默认情景模式',
         rules: '切换规则',
@@ -615,7 +617,7 @@ window.__ModuleLoader__.load({
     }
 
     function addProfile(doc, type) {
-      const prefix = type === 'FixedProfile' ? 'proxy' : 'auto switch'
+      const prefix = type === 'FixedProfile' ? 'proxy' : type === 'RuleListProfile' ? 'rule list' : 'auto switch'
       let index = 1
       let name = prefix
       while (doc[`+${name}`] !== undefined) {
@@ -624,15 +626,30 @@ window.__ModuleLoader__.load({
       }
       const next = clone(doc)
       const color = PROFILE_COLORS[(Object.keys(next).length + index) % PROFILE_COLORS.length]
-      next[`+${name}`] = type === 'FixedProfile'
-        ? {
-            name,
-            profileType: 'FixedProfile',
-            color,
-            fallbackProxy: { scheme: 'http', host: '127.0.0.1', port: 1080 },
-            bypassList: [],
-          }
-        : { name, profileType: 'SwitchProfile', color, defaultProfileName: 'direct', rules: [] }
+      if (type === 'FixedProfile') {
+        next[`+${name}`] = {
+          name,
+          profileType: 'FixedProfile',
+          color,
+          fallbackProxy: { scheme: 'http', host: '127.0.0.1', port: 1080 },
+          bypassList: [],
+        }
+      } else if (type === 'RuleListProfile') {
+        const proxy = Object.entries(next)
+          .find(([key, value]) => key.startsWith('+') && value !== null && typeof value === 'object'
+            && value.profileType === 'FixedProfile')
+        next[`+${name}`] = {
+          name,
+          profileType: 'RuleListProfile',
+          color,
+          format: 'AutoProxy',
+          matchProfileName: proxy === undefined ? 'direct' : proxy[0].slice(1),
+          defaultProfileName: 'direct',
+          ruleList: '',
+        }
+      } else {
+        next[`+${name}`] = { name, profileType: 'SwitchProfile', color, defaultProfileName: 'direct', rules: [] }
+      }
       return { doc: next, name }
     }
 
@@ -1432,7 +1449,8 @@ window.__ModuleLoader__.load({
         rows.map(row => profileChip(`p-${row.name}`, row.name, selection.kind === 'profile' && selection.name === row.name, () => setSelection({ kind: 'profile', name: row.name }), h(ProfileDot, { color: row.profile.color }))),
         h('div', { className: 'omega-addRow' },
           h(Button, { small: true, onClick: () => create('FixedProfile') }, `+ ${t('addProxy')}`),
-          h(Button, { small: true, onClick: () => create('SwitchProfile') }, `+ ${t('addSwitch')}`)))
+          h(Button, { small: true, onClick: () => create('SwitchProfile') }, `+ ${t('addSwitch')}`),
+          h(Button, { small: true, onClick: () => create('RuleListProfile') }, `+ ${t('addRuleList')}`)))
 
       let profileContent
       if (profile === undefined || (!builtin && currentRow === undefined)) {
