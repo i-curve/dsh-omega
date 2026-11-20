@@ -1493,7 +1493,7 @@ window.__ModuleLoader__.load({
         })
         ctx.slots.inject('settings.section.icon', () => ctx.slots.register({
           name: 'settings.section.icon', id: 'dsh-omega',
-        }, () => h(Icon, { size: 16 })))
+        }, props => h(Icon, { size: props?.size ?? 16 })))
       },
     }
   },

@@ -51,7 +51,8 @@ model provider such as `github-copilot` can be pinned to a proxy while
 ### From the plugin manager (recommended)
 
 1. Open **Plugins** in DSH and choose **Add plugin**.
-2. Install by package name `dsh-omega`, or by this repository's Git URL.
+2. Install by package name `dsh-omega` (after the first npm release), by this
+   repository's Git URL, or by a local checkout directory.
 3. Open **Settings → Proxy**.
 
 The plugin writes its state to `$DSH_HOME/dsh-omega/config.json` (usually
