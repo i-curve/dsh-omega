@@ -5,13 +5,13 @@
   "type": "module",
   "license": "MIT",
   "author": "allcloud",
-  "homepage": "https://github.com/allcloud/dsh-omega#readme",
+  "homepage": "https://github.com/i-curve/dsh-omega#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/allcloud/dsh-omega.git"
+    "url": "git+https://github.com/i-curve/dsh-omega.git"
   },
   "bugs": {
-    "url": "https://github.com/allcloud/dsh-omega/issues"
+    "url": "https://github.com/i-curve/dsh-omega/issues"
   },
   "keywords": [
     "dsh",

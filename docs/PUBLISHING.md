@@ -11,11 +11,11 @@ git init
 git add .
 git commit -m "feat: initial dsh-omega plugin"
 git branch -M main
-git remote add origin git@github.com:allcloud/dsh-omega.git
+git remote add origin git@github.com:i-curve/dsh-omega.git
 git push -u origin main
 ```
 
-If the GitHub owner is not `allcloud`, update `repository`, `homepage`, and
+If the GitHub owner is not `i-curve`, update `repository`, `homepage`, and
 `bugs` in `package.json` and the clone URLs in both READMEs.
 
 ## 2. Check the package
@@ -54,7 +54,7 @@ git push --follow-tags
 Configure either:
 
 - an `NPM_TOKEN` repository secret (automation token with publish rights), or
-- npm trusted publishing (OIDC) for `allcloud/dsh-omega` and workflow
+- npm trusted publishing (OIDC) for `i-curve/dsh-omega` and workflow
   `publish.yml`, then remove `NODE_AUTH_TOKEN` from the workflow.
 
 ## 4. GitHub release

@@ -1,6 +1,6 @@
 # dsh-omega
 
-[![ci](https://github.com/allcloud/dsh-omega/actions/workflows/ci.yml/badge.svg)](https://github.com/allcloud/dsh-omega/actions/workflows/ci.yml)
+[![ci](https://github.com/i-curve/dsh-omega/actions/workflows/ci.yml/badge.svg)](https://github.com/i-curve/dsh-omega/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/dsh-omega.svg)](https://www.npmjs.com/package/dsh-omega)
 [![license](https://img.shields.io/npm/l/dsh-omega.svg)](LICENSE)
 
@@ -62,7 +62,7 @@ server. No API key or external service is required.
 ### From a checkout
 
 ```sh
-git clone https://github.com/allcloud/dsh-omega.git
+git clone https://github.com/i-curve/dsh-omega.git
 cd dsh-omega
 npm test
 ```
