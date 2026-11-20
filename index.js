@@ -70,6 +70,7 @@ export function apply(ctx) {
     warnings: [...(store.warnings ?? []), ...table.warnings],
     summary: summariseDocument(store.doc),
     version: VERSION,
+    file: configPath(),
   })
 
   const handlers = {
@@ -114,6 +115,7 @@ export function apply(ctx) {
         throw Object.assign(new Error('url must use http or https'), { status: 400 })
       }
       let active = table
+      let draft = false
       if (candidate !== null && typeof candidate === 'object') {
         let normalized
         try {
@@ -121,12 +123,13 @@ export function apply(ctx) {
         } catch (error) {
           throw Object.assign(error, { status: 400 })
         }
+        draft = JSON.stringify(normalized) !== JSON.stringify(store.doc)
         active = buildRoutingTable(normalized, providersForRouting(discovered, extensionOf(normalized)))
       }
       return {
         url: url.href,
         currentProfileName: active.currentProfileName,
-        draft: candidate !== null && typeof candidate === 'object',
+        draft,
         ...active.resolve(url),
       }
     },

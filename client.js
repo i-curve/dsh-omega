@@ -166,6 +166,18 @@ window.__ModuleLoader__.load({
         add: 'Add',
         saveFirst: 'Save the profile before adding rules.',
         invalidName: 'A profile name cannot be empty.',
+        invalidRule: 'This rule is incomplete.',
+        invalidRegex: 'This regular expression is invalid.',
+        draftResult: 'draft, not applied',
+        appliedResult: 'applied',
+        draftHint: 'This result uses your unsaved edits. Save to apply it.',
+        fileLoaded: 'File loaded. Review it below, then press Import.',
+        useProfile: 'Use this profile',
+        inUse: 'current',
+        perSchemeNote: 'This profile has separate HTTP/HTTPS proxies. Editing here syncs them to one proxy; use the button to collapse them.',
+        collapseSchemes: 'Use one proxy',
+        clipboardError: 'Clipboard is unavailable.',
+        resetConfirm: 'Discard all unsaved changes?',
       },
       zh: {
         nav: '代理',
@@ -323,6 +335,18 @@ window.__ModuleLoader__.load({
         add: '添加',
         saveFirst: '请先保存情景模式，再添加规则。',
         invalidName: '情景模式名称不能为空。',
+        invalidRule: '这条规则还不完整。',
+        invalidRegex: '正则表达式无效。',
+        draftResult: '草稿，未应用',
+        appliedResult: '已应用',
+        draftHint: '这个结果使用了未保存的修改；保存后才会真正生效。',
+        fileLoaded: '文件已载入，确认内容后点“导入”。',
+        useProfile: '使用此情景模式',
+        inUse: '当前',
+        perSchemeNote: '这个情景模式为 HTTP/HTTPS 分别配置了代理。在这里编辑会把它们同步成同一个；也可以收拢成单一代理。',
+        collapseSchemes: '收拢成单一代理',
+        clipboardError: '剪贴板不可用。',
+        resetConfirm: '放弃所有未保存的修改？',
       },
     }
 
@@ -394,21 +418,18 @@ window.__ModuleLoader__.load({
 .omega-banner.warn { background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-state-warn-label); }
 .omega-banner.ok { background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-state-success-primary); }
 .omega-banner ul { margin:4px 0 0; padding-left:18px; }
-.omega-layout { display:grid; grid-template-columns:210px minmax(0,1fr); gap:16px; align-items:start; }
-@media (max-width:640px){ .omega-layout { grid-template-columns:1fr; } }
-.omega-rail { display:flex; flex-direction:column; gap:12px; border-right:0.5px solid var(--dsw-alias-border-l2); padding-right:12px; }
-@media (max-width:640px){ .omega-rail { border-right:0; border-bottom:0.5px solid var(--dsw-alias-border-l2); padding:0 0 12px; } }
-.omega-railGroup { display:flex; flex-direction:column; gap:2px; }
-.omega-railTitle { font-size:11px; line-height:16px; color:var(--dsw-alias-label-caption); text-transform:uppercase; letter-spacing:.04em; padding:0 8px; }
-.omega-railItem { box-sizing:border-box; display:flex; align-items:center; gap:8px; width:100%; border:none; background:transparent; color:var(--dsw-alias-label-primary); font:inherit; font-size:13px; line-height:20px; text-align:left; padding:6px 8px; border-radius:var(--dsw-radius-sm); cursor:pointer; }
-.omega-railItem:hover { background:var(--dsw-alias-interactive-bg-hover); }
-.omega-railItem:focus-visible { outline:2px solid var(--dsw-alias-border-selected); outline-offset:1px; }
-.omega-railItem.active { background:var(--dsw-alias-bg-module-platform); }
-.omega-railItem:disabled { color:var(--dsw-alias-label-tertiary); cursor:default; }
-.omega-dot { width:8px; height:8px; border-radius:50%; flex:none; corner-shape:round; }
-.omega-railName { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
-.omega-railTag { font-size:10px; color:var(--dsw-alias-label-caption); }
-.omega-addRow { display:flex; gap:6px; padding:2px 8px; }
+.omega-tabs { display:flex; gap:2px; border-bottom:0.5px solid var(--dsw-alias-border-l2); padding-bottom:2px; flex-wrap:wrap; }
+.omega-tab { box-sizing:border-box; border:none; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:13px; line-height:20px; padding:6px 10px; border-radius:var(--dsw-radius-sm) var(--dsw-radius-sm) 0 0; cursor:pointer; }
+.omega-tab:hover { background:var(--dsw-alias-interactive-bg-hover); }
+.omega-tab:focus-visible { outline:2px solid var(--dsw-alias-border-selected); outline-offset:1px; }
+.omega-tab.active { color:var(--dsw-alias-label-primary); font-weight:500; box-shadow:inset 0 -2px 0 var(--dsw-alias-brand-primary); }
+.omega-profileBar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.omega-profileChip { box-sizing:border-box; display:inline-flex; align-items:center; gap:6px; max-width:100%; border:0.5px solid var(--dsw-alias-border-l3); background:transparent; color:var(--dsw-alias-label-primary); font:inherit; font-size:12px; line-height:18px; padding:4px 9px; border-radius:var(--dsw-radius-sm); cursor:pointer; }
+.omega-profileChip:hover { background:var(--dsw-alias-interactive-bg-hover); }
+.omega-profileChip:focus-visible { outline:2px solid var(--dsw-alias-border-selected); outline-offset:1px; }
+.omega-profileChip.active { background:var(--dsw-alias-bg-module-platform); border-color:var(--dsw-alias-border-selected); }
+.omega-profileChipName { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.omega-addRow { display:inline-flex; gap:6px; flex-wrap:wrap; }
 .omega-content { min-width:0; display:flex; flex-direction:column; gap:12px; }
 .omega-card { border:0.5px solid var(--dsw-alias-settings-card-stroke); background:var(--dsw-alias-settings-card-fill); border-radius:var(--dsw-radius-xl); padding:14px; display:flex; flex-direction:column; gap:12px; }
 .omega-cardHead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -420,6 +441,7 @@ window.__ModuleLoader__.load({
 .omega-field { display:flex; flex-direction:column; gap:4px; min-width:0; }
 .omega-label { font-size:12px; line-height:18px; color:var(--dsw-alias-label-secondary); }
 .omega-input, .omega-select, .omega-textarea { box-sizing:border-box; width:100%; font:inherit; font-size:13px; line-height:20px; color:var(--dsw-alias-label-primary); background:var(--dsw-alias-bg-layer-1); border:0.5px solid var(--dsw-alias-border-l3); border-radius:var(--dsw-radius-sm); padding:5px 8px; }
+.omega-input.invalid, .omega-select.invalid { border-color:var(--dsw-alias-state-error-primary); }
 .omega-input:focus, .omega-select:focus, .omega-textarea:focus { outline:2px solid var(--dsw-alias-border-selected); outline-offset:1px; }
 .omega-textarea { min-height:72px; resize:vertical; font-family:ui-monospace, monospace; }
 .omega-row { display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:8px; }
@@ -434,12 +456,15 @@ window.__ModuleLoader__.load({
 .omega-btn.danger { color:var(--dsw-alias-state-error-primary); }
 .omega-btn.small { height:26px; padding:0 8px; font-size:12px; line-height:18px; }
 .omega-btn.icon { width:28px; padding:0; }
-.omega-rules { display:flex; flex-direction:column; gap:6px; }
-.omega-rule { display:grid; grid-template-columns:minmax(0,1.7fr) 120px 26px 26px 26px; gap:6px; align-items:center; }
-.omega-ruleCondition { display:grid; grid-template-columns:110px minmax(0,1fr); gap:6px; align-items:center; min-width:0; }
-@media (max-width:640px){ .omega-rule { grid-template-columns:1fr 1fr; } .omega-rule > * { min-width:0; } }
-.omega-ruleHead { font-size:11px; color:var(--dsw-alias-label-caption); }
-.omega-ip { display:flex; gap:6px; }
+.omega-rules { display:flex; flex-direction:column; gap:8px; }
+.omega-rule { display:flex; flex-direction:column; gap:6px; border:0.5px solid var(--dsw-alias-border-l2); border-radius:var(--dsw-radius-md); padding:8px; }
+.omega-rule.invalid { border-color:var(--dsw-alias-state-error-primary); }
+.omega-ruleCondition { display:grid; grid-template-columns:120px minmax(0,1fr); gap:6px; align-items:center; min-width:0; }
+.omega-ruleFoot { display:flex; align-items:center; gap:6px; }
+.omega-ruleTarget { flex:1 1 auto; min-width:0; }
+.omega-ruleActions { display:inline-flex; gap:4px; flex:none; }
+.omega-ruleError { font-size:11px; line-height:16px; color:var(--dsw-alias-state-error-primary); }
+@media (max-width:520px){ .omega-ruleCondition { grid-template-columns:1fr; } }
 .omega-table { display:flex; flex-direction:column; gap:8px; }
 .omega-provider { border:0.5px solid var(--dsw-alias-border-l2); border-radius:var(--dsw-radius-md); padding:10px; display:flex; flex-direction:column; gap:8px; }
 .omega-providerHead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -515,14 +540,11 @@ window.__ModuleLoader__.load({
     }
 
     function renameProfile(doc, oldName, newName) {
-      const next = {}
-      for (const [key, value] of Object.entries(doc)) {
-        if (key === `+${oldName}`) {
-          next[`+${newName}`] = { ...value, name: newName }
-        } else {
-          next[key] = value
-        }
-      }
+      const next = clone(doc)
+      const original = next[`+${oldName}`]
+      if (original === undefined) return doc
+      delete next[`+${oldName}`]
+      next[`+${newName}`] = { ...original, name: newName }
       for (const [key, value] of Object.entries(next)) {
         if (!key.startsWith('+') || value === null || typeof value !== 'object') continue
         if (value.defaultProfileName === oldName) value.defaultProfileName = newName
@@ -643,9 +665,9 @@ window.__ModuleLoader__.load({
       return t(CONDITION_LABELS[type] ?? 'condHostWildcard')
     }
 
-    function Button({ children, onClick, variant, disabled, title, small, type = 'button' }) {
+    function Button({ children, onClick, variant, disabled, title, small, type = 'button', ...rest }) {
       const className = ['omega-btn', variant, small ? 'small' : ''].filter(Boolean).join(' ')
-      return h('button', { type, className, onClick, disabled, title }, children)
+      return h('button', { type, className, onClick, disabled, title, ...rest }, children)
     }
 
     function Field({ label, children, className }) {
@@ -658,12 +680,12 @@ window.__ModuleLoader__.load({
       return h('span', { className: 'omega-dot', style: { background: color ?? '#aaaaaa' } })
     }
 
-    function WarningBanner({ t, warnings, variant = 'warn' }) {
+    function WarningBanner({ t, warnings, variant = 'warn', limit = 6 }) {
       if (!Array.isArray(warnings) || warnings.length === 0) return null
-      return h('div', { className: `omega-banner ${variant}` },
+      return h('div', { className: `omega-banner ${variant}`, role: variant === 'error' ? 'alert' : 'status' },
         h('div', null, `${t('warnings')} (${warnings.length})`),
-        h('ul', null, warnings.slice(0, 6).map((warning, index) => h('li', { key: index }, message(t, warning)))),
-        warnings.length > 6 ? h('div', null, `+${warnings.length - 6}…`) : null)
+        h('ul', null, warnings.slice(0, limit).map((warning, index) => h('li', { key: index }, message(t, warning)))),
+        warnings.length > limit ? h('div', null, `+${warnings.length - limit}…`) : null)
     }
 
     function ProfileHeader({ t, row, profile, onRename, onDelete, canDelete }) {
@@ -704,14 +726,44 @@ window.__ModuleLoader__.load({
 
     function FixedProfileEditor({ t, doc, row, update }) {
       const profile = row.profile
-      const proxy = profile.fallbackProxy ?? {}
-      const auth = profile.auth?.all ?? {}
-      const applyProxy = (patch) => update(doc, draft => { draft[`+${row.name}`].fallbackProxy = { ...proxy, ...patch } })
+      const proxy = profile.proxyForHttps ?? profile.proxyForHttp ?? profile.fallbackProxy ?? {}
+      const perScheme = profile.proxyForHttp !== undefined || profile.proxyForHttps !== undefined
+      const auth = profile.auth?.all ?? profile.auth?.proxyForHttps ?? profile.auth?.proxyForHttp ?? {}
+      const bypassSource = (profile.bypassList ?? [])
+        .filter(condition => condition?.conditionType === 'BypassCondition')
+        .map(condition => condition.pattern ?? '')
+        .join('\n')
+      const [bypassDraft, setBypassDraft] = useState(bypassSource)
+      useEffect(() => { setBypassDraft(bypassSource) }, [row.name])
+      const applyProxy = (patch) => update(doc, (draft) => {
+        const target = draft[`+${row.name}`]
+        const base = target.proxyForHttps ?? target.proxyForHttp ?? target.fallbackProxy ?? {}
+        const next = { ...base, ...patch }
+        target.fallbackProxy = { ...next }
+        if (target.proxyForHttp !== undefined) target.proxyForHttp = { ...next }
+        if (target.proxyForHttps !== undefined) target.proxyForHttps = { ...next }
+      })
       const applyAuth = (patch) => update(doc, (draft) => {
         const target = draft[`+${row.name}`]
-        const next = { ...(target.auth?.all ?? {}), ...patch }
-        if (next.username === '' && (next.password ?? '') === '') delete target.auth
-        else target.auth = { ...(target.auth ?? {}), all: next }
+        const base = target.auth?.all ?? target.auth?.proxyForHttps ?? target.auth?.proxyForHttp ?? {}
+        const next = { ...base, ...patch }
+        if (next.username === '' && (next.password ?? '') === '') {
+          delete target.auth
+          return
+        }
+        const auth = { ...(target.auth ?? {}), all: next }
+        if (target.auth?.proxyForHttp !== undefined) auth.proxyForHttp = { ...next }
+        if (target.auth?.proxyForHttps !== undefined) auth.proxyForHttps = { ...next }
+        target.auth = auth
+      })
+      const commitBypass = () => update(doc, (draft) => {
+        const target = draft[`+${row.name}`]
+        const others = (target.bypassList ?? []).filter(condition => condition?.conditionType !== 'BypassCondition')
+        const patterns = bypassDraft.split('\n').map(line => line.trim()).filter(Boolean)
+        target.bypassList = [
+          ...patterns.map(pattern => ({ conditionType: 'BypassCondition', pattern })),
+          ...others,
+        ]
       })
       return h('div', { className: 'omega-card' },
         h('div', { className: 'omega-cardHead' },
@@ -720,6 +772,17 @@ window.__ModuleLoader__.load({
           h('span', { className: 'omega-badge' }, t('typeProxy'))),
         (proxy.scheme !== undefined && proxy.scheme !== 'http' && proxy.scheme !== 'https')
           ? h('p', { className: 'omega-muted' }, t('socksWarning'))
+          : null,
+        perScheme
+          ? h('div', { className: 'omega-split' },
+              h('p', { className: 'omega-muted omega-grow' }, t('perSchemeNote')),
+              h(Button, {
+                small: true,
+                onClick: () => update(doc, (draft) => {
+                  delete draft[`+${row.name}`].proxyForHttp
+                  delete draft[`+${row.name}`].proxyForHttps
+                }),
+              }, t('collapseSchemes')))
           : null,
         h('div', { className: 'omega-row' },
           h(Field, { label: t('protocol'), className: 'omega-col-3' },
@@ -736,7 +799,7 @@ window.__ModuleLoader__.load({
           h(Field, { label: t('port'), className: 'omega-col-3' },
             h('input', {
               className: 'omega-input', type: 'number', min: 1, max: 65535, value: proxy.port ?? 1080,
-              onChange: event => applyProxy({ port: Number(event.target.value) }),
+              onChange: event => applyProxy({ port: event.target.value === '' ? 0 : Number(event.target.value) }),
             }))),
         h('div', { className: 'omega-row' },
           h(Field, { label: t('username'), className: 'omega-col-6' },
@@ -751,24 +814,37 @@ window.__ModuleLoader__.load({
             }))),
         h(Field, { label: t('bypass') },
           h('textarea', {
-            className: 'omega-textarea', rows: 4,
-            value: (profile.bypassList ?? []).map(item => item.pattern ?? '').join('\n'),
-            onChange: (event) => {
-              const patterns = event.target.value.split('\n').map(line => line.trim()).filter(Boolean)
-              update(doc, (draft) => {
-                draft[`+${row.name}`].bypassList = patterns.map(pattern => ({ conditionType: 'BypassCondition', pattern }))
-              })
-            },
+            className: 'omega-textarea', rows: 4, value: bypassDraft,
+            onChange: event => setBypassDraft(event.target.value),
+            onBlur: commitBypass,
           }),
           h('span', { className: 'omega-muted' }, t('bypassHint'))))
     }
 
-    function conditionEditor({ t, condition, onChange }) {
+    function ruleProblem(t, rule) {
+      const condition = rule?.condition
+      if (condition === null || typeof condition !== 'object') return t('invalidRule')
+      const type = condition.conditionType
+      if (type === 'TrueCondition' || type === 'FalseCondition') return ''
+      if (type === 'IpCondition') return String(condition.ip ?? '').trim() === '' ? t('invalidRule') : ''
+      const pattern = String(condition.pattern ?? '')
+      if (pattern === '') return t('invalidRule')
+      if (type === 'HostRegexCondition' || type === 'UrlRegexCondition') {
+        try {
+          new RegExp(pattern.replace(/^\//, '').replace(/\/$/, ''))
+        } catch {
+          return t('invalidRegex')
+        }
+      }
+      return ''
+    }
+
+    function conditionEditor({ t, condition, onChange, invalid }) {
       const type = condition.conditionType ?? 'HostWildcardCondition'
       const needsPattern = type !== 'TrueCondition' && type !== 'FalseCondition' && type !== 'IpCondition'
       return h(React.Fragment, null,
         h('select', {
-          className: 'omega-select', value: type,
+          className: `omega-select ${invalid ? 'invalid' : ''}`, value: type,
           'aria-label': t('condition'),
           onChange: (event) => {
             const nextType = event.target.value
@@ -780,17 +856,17 @@ window.__ModuleLoader__.load({
         type === 'IpCondition'
           ? h('span', { className: 'omega-ip' },
               h('input', {
-                className: 'omega-input', value: condition.ip ?? '', 'aria-label': 'IP',
+                className: `omega-input ${invalid ? 'invalid' : ''}`, value: condition.ip ?? '', 'aria-label': 'IP',
                 onChange: event => onChange({ ...condition, ip: event.target.value }),
               }),
               h('input', {
-                className: 'omega-input', type: 'number', min: 0, max: 128, style: { maxWidth: 70 },
+                className: `omega-input ${invalid ? 'invalid' : ''}`, type: 'number', min: 0, max: 128, style: { maxWidth: 70 },
                 value: condition.prefixLength ?? 32, 'aria-label': 'CIDR',
                 onChange: event => onChange({ ...condition, prefixLength: Number(event.target.value) }),
               }))
           : needsPattern
             ? h('input', {
-                className: 'omega-input', value: condition.pattern ?? '',
+                className: `omega-input ${invalid ? 'invalid' : ''}`, value: condition.pattern ?? '',
                 placeholder: type === 'HostWildcardCondition' ? '*.example.com' : type === 'HostRegexCondition' || type === 'UrlRegexCondition' ? '^api\\.' : '',
                 'aria-label': t('pattern'),
                 onChange: event => onChange({ ...condition, pattern: event.target.value }),
@@ -822,31 +898,35 @@ window.__ModuleLoader__.load({
           h('span', { className: 'omega-muted' }, t('addRuleHint'))),
         rules.length === 0
           ? h('p', { className: 'omega-muted' }, t('noRules'))
-          : h('div', { className: 'omega-rules' },
-              h('div', { className: 'omega-rule omega-ruleHead' },
-                h('span', null, t('condition')), h('span', null, t('target')), h('span'), h('span'), h('span')),
-              rules.map((rule, index) => h('div', { className: 'omega-rule', key: index },
+          : h('div', { className: 'omega-rules' }, rules.map((rule, index) => {
+              const problem = ruleProblem(t, rule)
+              return h('div', { className: `omega-rule ${problem === '' ? '' : 'invalid'}`, key: index },
                 h('div', { className: 'omega-ruleCondition' }, conditionEditor({
                   t,
                   condition: rule.condition ?? { conditionType: 'HostWildcardCondition', pattern: '' },
+                  invalid: problem !== '',
                   onChange: (condition) => setRules(list => { list[index] = { ...list[index], condition } }),
                 })),
-                h('select', {
-                  className: 'omega-select', value: rule.profileName ?? 'direct', 'aria-label': t('target'),
-                  onChange: event => setRules(list => { list[index] = { ...list[index], profileName: event.target.value } }),
-                }, names.map(name => h('option', { key: name, value: name }, name))),
-                h(Button, {
-                  small: true, disabled: index === 0, title: t('up'),
-                  onClick: () => setRules((list) => { const [item] = list.splice(index, 1); list.splice(index - 1, 0, item) }),
-                }, '↑'),
-                h(Button, {
-                  small: true, disabled: index === rules.length - 1, title: t('down'),
-                  onClick: () => setRules((list) => { const [item] = list.splice(index, 1); list.splice(index + 1, 0, item) }),
-                }, '↓'),
-                h(Button, {
-                  small: true, variant: 'danger', title: t('delete'),
-                  onClick: () => setRules(list => { list.splice(index, 1) }),
-                }, '×')))),
+                h('div', { className: 'omega-ruleFoot' },
+                  h('select', {
+                    className: 'omega-select omega-ruleTarget', value: rule.profileName ?? 'direct', 'aria-label': t('target'),
+                    onChange: event => setRules(list => { list[index] = { ...list[index], profileName: event.target.value } }),
+                  }, names.map(name => h('option', { key: name, value: name }, name))),
+                  h('div', { className: 'omega-ruleActions' },
+                    h(Button, {
+                      small: true, disabled: index === 0, title: t('up'),
+                      onClick: () => setRules((list) => { const [item] = list.splice(index, 1); list.splice(index - 1, 0, item) }),
+                    }, '↑'),
+                    h(Button, {
+                      small: true, disabled: index === rules.length - 1, title: t('down'),
+                      onClick: () => setRules((list) => { const [item] = list.splice(index, 1); list.splice(index + 1, 0, item) }),
+                    }, '↓'),
+                    h(Button, {
+                      small: true, variant: 'danger', title: t('delete'),
+                      onClick: () => setRules(list => { list.splice(index, 1) }),
+                    }, '×'))),
+                problem === '' ? null : h('span', { className: 'omega-ruleError' }, problem))
+            })),
         h('div', { className: 'omega-split' },
           h(Field, { label: t('manualRule'), className: 'omega-grow' },
             h('input', {
@@ -921,13 +1001,14 @@ window.__ModuleLoader__.load({
         h('p', { className: 'omega-muted' }, t('unsupported')))
     }
 
-    function ProvidersPanel({ t, snapshot, doc, setDoc, refresh }) {
+    function ProvidersPanel({ t, snapshot, doc, setDoc, refresh, markDirty }) {
       const extension = extensionOf(doc)
       const providers = snapshot.providers ?? []
       const names = allProfileNames(doc)
       const [editing, setEditing] = useState({})
       const [hostsDraft, setHostsDraft] = useState({})
       const updateExtension = (mutate) => {
+        markDirty?.()
         setDoc((current) => {
           const next = clone(current)
           const ext = extensionOf(next)
@@ -1004,7 +1085,9 @@ window.__ModuleLoader__.load({
       const [result, setResult] = useState(null)
       const [busy, setBusy] = useState(false)
       const [error, setError] = useState('')
+      useEffect(() => { setResult(null) }, [url, doc])
       const run = async () => {
+        if (busy) return
         setBusy(true)
         setError('')
         try {
@@ -1035,7 +1118,9 @@ window.__ModuleLoader__.load({
               h('div', { className: 'omega-result' },
                 h('strong', null, decision),
                 result.kind === 'proxy' ? h('span', { className: 'omega-code' }, result.proxy?.uri) : null,
-                h('span', { className: 'omega-badge' }, `${t('via')}: ${via}`)),
+                h('span', { className: 'omega-badge' }, `${t('via')}: ${via}`),
+                h('span', { className: `omega-badge ${result.draft ? 'warn' : 'ok'}` }, result.draft ? t('draftResult') : t('appliedResult'))),
+              result.draft ? h('p', { className: 'omega-muted' }, t('draftHint')) : null,
               h('ol', { className: 'omega-trace' },
                 historyOf(result.trace).map((step, index) => h('li', { key: index },
                   h('span', { className: 'step' }, `${index + 1}.`),
@@ -1070,7 +1155,7 @@ window.__ModuleLoader__.load({
         setTimeout(() => URL.revokeObjectURL(link.href), 1000)
       }
       const copy = async () => {
-        try { await navigator.clipboard.writeText(preview); setNotice(t('copied')) } catch { setError('clipboard unavailable') }
+        try { await navigator.clipboard.writeText(preview); setNotice(t('copied')) } catch { setError(t('clipboardError')) }
       }
       const runImport = async (content) => {
         setBusy(true)
@@ -1095,7 +1180,11 @@ window.__ModuleLoader__.load({
         const file = event.target.files?.[0]
         if (file === undefined) return
         const reader = new FileReader()
-        reader.onload = () => runImport(String(reader.result ?? ''))
+        reader.onload = () => {
+          setText(String(reader.result ?? ''))
+          setError('')
+          setNotice(t('fileLoaded'))
+        }
         reader.readAsText(file)
         event.target.value = ''
       }
@@ -1142,7 +1231,7 @@ window.__ModuleLoader__.load({
         api('/state').then((data) => {
           if (!alive) return
           setSnapshot(data)
-          setDoc(data.doc)
+          setDoc(clone(data.doc))
           setSelection({ kind: 'profile', name: data.currentProfileName })
         }).catch((failure) => { if (alive) setError(failure.message) })
         return () => { alive = false }
@@ -1171,21 +1260,26 @@ window.__ModuleLoader__.load({
         setNotice('')
       }
       const rename = (oldName, newName) => {
-        if (newName === '' || names.includes(newName)) return false
+        if (newName === '') { setNotice(t('invalidName')); return false }
+        if (names.includes(newName)) { setNotice(t('nameTaken')); return false }
+        setNotice('')
         setDoc((current) => renameProfile(current, oldName, newName))
         if (selection.kind === 'profile' && selection.name === oldName) setSelection({ kind: 'profile', name: newName })
         return true
       }
       const remove = (name) => {
+        setNotice('')
         setDoc((current) => deleteProfile(current, name))
         if (selection.kind === 'profile' && selection.name === name) setSelection({ kind: 'profile', name: 'direct' })
       }
       const create = (type) => {
+        setNotice('')
         const result = addProfile(doc, type)
         setDoc(result.doc)
         setSelection({ kind: 'profile', name: result.name })
       }
       const setCurrent = (name) => {
+        setNotice('')
         setDoc((current) => {
           const next = clone(current)
           const ext = extensionOf(next)
@@ -1202,7 +1296,7 @@ window.__ModuleLoader__.load({
         try {
           const result = await api('/config', { method: 'POST', body: JSON.stringify({ doc }) })
           setSnapshot(result)
-          setDoc(result.doc)
+          setDoc(clone(result.doc))
           setNotice(t('saved'))
         } catch (failure) {
           setError(failure.message)
@@ -1221,7 +1315,7 @@ window.__ModuleLoader__.load({
       }
       const onImported = async (result) => {
         setSnapshot(result)
-        setDoc(result.doc)
+        setDoc(clone(result.doc))
         setSelection({ kind: 'profile', name: result.currentProfileName })
       }
 
@@ -1231,48 +1325,34 @@ window.__ModuleLoader__.load({
         ? { name: selection.name, profileType: selection.name === 'direct' ? 'DirectProfile' : 'SystemProfile', color: '#aaaaaa' }
         : currentRow?.profile
 
-      const rail = (id, label, active, onClick, dot) => h('button', {
-        key: id, type: 'button', className: `omega-railItem ${active ? 'active' : ''}`, onClick,
-      }, dot ?? null, h('span', { className: 'omega-railName' }, label))
+      const profileChip = (id, label, active, onClick, dot) => h('button', {
+        key: id,
+        type: 'button',
+        className: `omega-profileChip ${active ? 'active' : ''}`,
+        onClick,
+        'aria-current': active ? 'true' : undefined,
+      }, dot ?? null, h('span', { className: 'omega-profileChipName' }, label))
 
-      const railGroups = [
-        h('div', { className: 'omega-railGroup', key: 'profiles' },
-          h('span', { className: 'omega-railTitle' }, t('profiles')),
-          rail('direct', 'direct', selection.kind === 'profile' && selection.name === 'direct', () => setSelection({ kind: 'profile', name: 'direct' }), h(ProfileDot, { color: '#aaaaaa' })),
-          rail('system', 'system', selection.kind === 'profile' && selection.name === 'system', () => setSelection({ kind: 'profile', name: 'system' }), h(ProfileDot, { color: '#000000' })),
-          rows.map(row => rail(`p-${row.name}`, row.name, selection.kind === 'profile' && selection.name === row.name, () => setSelection({ kind: 'profile', name: row.name }), h(ProfileDot, { color: row.profile.color }))),
-          h('div', { className: 'omega-addRow', key: 'add' },
-            h(Button, { small: true, onClick: () => create('FixedProfile') }, `+ ${t('addProxy')}`),
-            h(Button, { small: true, onClick: () => create('SwitchProfile') }, `+ ${t('addSwitch')}`))),
-        h('div', { className: 'omega-railGroup', key: 'tools' },
-          h('span', { className: 'omega-railTitle' }, '—'),
-          rail('providers', t('providers'), selection.kind === 'providers', () => setSelection({ kind: 'providers' })),
-          rail('tester', t('tester'), selection.kind === 'tester', () => setSelection({ kind: 'tester' })),
-          rail('io', t('io'), selection.kind === 'io', () => setSelection({ kind: 'io' }))),
-      ]
+      const profileBar = h('div', { className: 'omega-profileBar', role: 'group', 'aria-label': t('profiles') },
+        profileChip('direct', 'direct', selection.kind === 'profile' && selection.name === 'direct', () => setSelection({ kind: 'profile', name: 'direct' }), h(ProfileDot, { color: '#aaaaaa' })),
+        profileChip('system', 'system', selection.kind === 'profile' && selection.name === 'system', () => setSelection({ kind: 'profile', name: 'system' }), h(ProfileDot, { color: 'var(--dsw-alias-label-tertiary)' })),
+        rows.map(row => profileChip(`p-${row.name}`, row.name, selection.kind === 'profile' && selection.name === row.name, () => setSelection({ kind: 'profile', name: row.name }), h(ProfileDot, { color: row.profile.color }))),
+        h('div', { className: 'omega-addRow' },
+          h(Button, { small: true, onClick: () => create('FixedProfile') }, `+ ${t('addProxy')}`),
+          h(Button, { small: true, onClick: () => create('SwitchProfile') }, `+ ${t('addSwitch')}`)))
 
-      let content
-      if (selection.kind === 'providers') {
-        content = h(React.Fragment, null,
-          h(ProvidersPanel, { t, snapshot, doc, setDoc, refresh: refreshProviders }),
-          h(WarningBanner, { t, warnings: snapshot.warnings }))
-      } else if (selection.kind === 'tester') {
-        content = h(TestPanel, { t, doc })
-      } else if (selection.kind === 'io') {
-        content = h(React.Fragment, null,
-          h(ImportExportPanel, { t, snapshot, onImported, setNotice }),
-          h(WarningBanner, { t, warnings: snapshot.warnings }))
-      } else if (profile === undefined || !builtin && currentRow === undefined) {
-        content = h('div', { className: 'omega-card' }, h('p', { className: 'omega-empty' }, t('noDoc')))
+      let profileContent
+      if (profile === undefined || (!builtin && currentRow === undefined)) {
+        profileContent = h('div', { className: 'omega-card' }, h('p', { className: 'omega-empty' }, t('noDoc')))
       } else if (builtin) {
-        content = h('div', { className: 'omega-card' },
+        profileContent = h('div', { className: 'omega-card' },
           h('div', { className: 'omega-cardHead' },
             h(ProfileDot, { color: profile.color }),
             h('span', { className: 'omega-cardTitle' }, selection.name),
             h('span', { className: 'omega-badge' }, t(selection.name === 'direct' ? 'typeDirect' : 'typeSystem'))),
           h('p', { className: 'omega-muted' }, selection.name === 'direct' ? t('directNote') : t('systemNote')))
       } else if (profile.profileType === 'FixedProfile') {
-        content = h(React.Fragment, null,
+        profileContent = h(React.Fragment, null,
           h('div', { className: 'omega-card' },
             h(ProfileHeader, {
               t, row: { name: selection.name, builtin: false }, profile,
@@ -1280,15 +1360,15 @@ window.__ModuleLoader__.load({
             })),
           h(FixedProfileEditor, { t, doc, row: { name: selection.name, profile }, update: (_, mutate) => updateProfile(mutate) }))
       } else if (profile.profileType === 'SwitchProfile' || profile.profileType === 'VirtualProfile') {
-        content = h(React.Fragment, null,
+        profileContent = h(React.Fragment, null,
           h('div', { className: 'omega-card' },
             h(ProfileHeader, {
               t, row: { name: selection.name, builtin: false }, profile,
               onRename: rename, onDelete: remove, canDelete: true,
             })),
-          h(SwitchProfileEditor, { t, doc, row: { name: selection.name, profile }, update: (_, mutate) => updateProfile(mutate), setNotice }))
+          h(SwitchProfileEditor, { t, doc, row: { name: selection.name, profile }, update: (_, mutate) => updateProfile(mutate) }))
       } else if (profile.profileType === 'RuleListProfile') {
-        content = h(React.Fragment, null,
+        profileContent = h(React.Fragment, null,
           h('div', { className: 'omega-card' },
             h(ProfileHeader, {
               t, row: { name: selection.name, builtin: false }, profile,
@@ -1296,18 +1376,76 @@ window.__ModuleLoader__.load({
             })),
           h(RuleListProfileEditor, { t, doc, row: { name: selection.name, profile }, update: (_, mutate) => updateProfile(mutate) }))
       } else {
-        content = h(React.Fragment, null,
+        profileContent = h(React.Fragment, null,
           h('div', { className: 'omega-card' },
             h(ProfileHeader, { t, row: { name: selection.name, builtin: false }, profile, onRename: rename, onDelete: remove, canDelete: true })),
           h(UnsupportedProfileEditor, { t, row: { name: selection.name, profile } }))
       }
 
+      const activeTab = selection.kind === 'profile' ? 'profiles' : selection.kind
+      const tabs = [
+        { id: 'profiles', label: t('profiles') },
+        { id: 'providers', label: t('providers') },
+        { id: 'tester', label: t('tester') },
+        { id: 'io', label: t('io') },
+      ]
+      const openTab = (id) => {
+        if (id === 'profiles') {
+          const name = selection.kind === 'profile' && selection.name !== ''
+            ? selection.name
+            : (extension.currentProfileName || 'direct')
+          setSelection({ kind: 'profile', name })
+          return
+        }
+        setSelection({ kind: id })
+      }
+      const tabBar = h('div', { className: 'omega-tabs', role: 'tablist', 'aria-label': t('title') },
+        tabs.map(tab => h('button', {
+          key: tab.id,
+          type: 'button',
+          role: 'tab',
+          'aria-selected': activeTab === tab.id ? 'true' : 'false',
+          className: `omega-tab ${activeTab === tab.id ? 'active' : ''}`,
+          onClick: () => openTab(tab.id),
+        }, tab.label)))
+
+      const selectedWarnings = selection.kind === 'profile'
+        ? snapshot.warnings.filter(warning => warning.params?.name === selection.name)
+        : []
+
+      let content
+      if (activeTab === 'profiles') {
+        const profileToolbar = selection.kind === 'profile'
+          ? h('div', { className: 'omega-split' },
+              h('span', { className: 'omega-muted omega-grow' }, `${t('current')}: ${extension.currentProfileName}`),
+              extension.currentProfileName === selection.name
+                ? h('span', { className: 'omega-badge ok' }, t('inUse'))
+                : h(Button, { small: true, onClick: () => setCurrent(selection.name) }, t('useProfile')))
+          : null
+        content = h(React.Fragment, null,
+          profileBar,
+          profileToolbar,
+          selectedWarnings.length > 0 ? h(WarningBanner, { t, warnings: selectedWarnings }) : null,
+          profileContent)
+      } else if (activeTab === 'providers') {
+        content = h(ProvidersPanel, { t, snapshot, doc, setDoc, refresh: refreshProviders, markDirty: () => setNotice('') })
+      } else if (activeTab === 'tester') {
+        content = h(TestPanel, { t, doc })
+      } else {
+        content = h(ImportExportPanel, { t, snapshot, onImported, setNotice })
+      }
+
+      const summary = snapshot.summary ?? {}
       return h('div', { className: 'omega-page' },
         h('style', null, CSS),
         h('div', { className: 'omega-head' },
           h('div', { className: 'omega-headText' },
             h('h2', { className: 'omega-title' }, t('title')),
-            h('p', { className: 'omega-intro' }, t('subtitle'))),
+            h('p', { className: 'omega-intro' }, t('subtitle')),
+            h('p', { className: 'omega-foot' },
+              h('span', null, `${t('current')}: ${extension.currentProfileName}`),
+              h('span', null, `${summary.profiles ?? 0} ${t('profilesCount')}`),
+              h('span', null, `${summary.rules ?? 0} ${t('rulesCount')}`))),
           h('div', { className: 'omega-headActions' },
             h('label', { className: 'omega-current' },
               t('current'),
@@ -1316,13 +1454,13 @@ window.__ModuleLoader__.load({
                 onChange: event => setCurrent(event.target.value),
               }, names.map(name => h('option', { key: name, value: name }, name)))),
             h(Button, { variant: 'primary', onClick: save, disabled: !dirty || busy }, busy ? t('saving') : t('save')),
-            dirty ? h(Button, { onClick: () => setDoc(snapshot.doc) }, t('reset')) : null)),
-        error !== '' ? h('div', { className: 'omega-banner error' }, t('error'), ': ', error) : null,
-        dirty ? h('div', { className: 'omega-banner warn' }, t('dirty')) : null,
-        notice !== '' ? h('div', { className: 'omega-banner ok' }, notice) : null,
-        h('div', { className: 'omega-layout' },
-          h('aside', { className: 'omega-rail' }, railGroups),
-          h('main', { className: 'omega-content' }, content)),
+            dirty ? h(Button, { onClick: () => { if (window.confirm(t('resetConfirm'))) setDoc(clone(snapshot.doc)) } }, t('reset')) : null)),
+        error !== '' ? h('div', { className: 'omega-banner error', role: 'alert' }, t('error'), ': ', error) : null,
+        dirty ? h('div', { className: 'omega-banner warn', role: 'status' }, t('dirty')) : null,
+        notice !== '' ? h('div', { className: 'omega-banner ok', role: 'status' }, notice) : null,
+        snapshot.warnings.length > 0 ? h(WarningBanner, { t, warnings: snapshot.warnings }) : null,
+        tabBar,
+        h('section', { className: 'omega-content', 'aria-label': t('title') }, content),
         h('div', { className: 'omega-foot' },
           h('span', null, `${t('file')}: `, h('span', { className: 'omega-code' }, snapshot.file ?? '')),
           h('span', null, `${t('version')} ${snapshot.version ?? ''}`),
@@ -1332,8 +1470,8 @@ window.__ModuleLoader__.load({
     const Icon = ({ size = 16 }) => h('svg', {
       width: size, height: size, viewBox: '0 0 36 36', 'aria-hidden': true, focusable: false,
     }, h('rect', { x: 4, y: 4, width: 28, height: 28, rx: 8, fill: 'currentColor' }),
-    h('path', { d: 'M11 14.5h13M20.5 11L24 14.5L20.5 18', fill: 'none', stroke: '#ffffff', strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' }),
-    h('path', { d: 'M25 21.5H12M15.5 18L12 21.5L15.5 25', fill: 'none', stroke: '#ffffff', strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' }))
+    h('path', { d: 'M11 14.5h13M20.5 11L24 14.5L20.5 18', fill: 'none', stroke: 'var(--dsw-alias-bg-layer-1)', strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' }),
+    h('path', { d: 'M25 21.5H12M15.5 18L12 21.5L15.5 25', fill: 'none', stroke: 'var(--dsw-alias-bg-layer-1)', strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' }))
 
     return {
       inject: ['slots', 'locale'],
