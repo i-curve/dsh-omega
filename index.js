@@ -1,0 +1,169 @@
+/**
+ * dsh-omega — Zero Omega style proxy routing for DeepSeek Harness.
+ *
+ * Host half: own the process-wide undici dispatcher, evaluate a Zero Omega
+ * options document per request, expose a small HTTP control surface for the
+ * settings page, and keep the document in `$DSH_HOME/dsh-omega/config.json`.
+ *
+ * @module dsh-omega
+ */
+import fs from 'node:fs'
+import { ConfigStore, exportDocument, extensionOf, importDocument, configPath, normalizeDocument } from './lib/config.js'
+import { buildRoutingTable, summariseDocument } from './lib/profiles.js'
+import { discoverProviders, joinProviderRows, providersForRouting } from './lib/providers.js'
+import { installRouter } from './lib/router.js'
+import { installHttpApi } from './lib/http-api.js'
+
+function readVersion() {
+  try {
+    return JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version ?? '0.0.0'
+  } catch {
+    return '0.0.0'
+  }
+}
+
+const VERSION = readVersion()
+
+function providerSignature(providers) {
+  return JSON.stringify(providers.map(provider => [provider.id, provider.hosts]))
+}
+
+/**
+ * Mount the plugin.
+ * @param ctx - plugin context.
+ */
+export function apply(ctx) {
+  const store = new ConfigStore(ctx)
+  if (!fs.existsSync(configPath())) {
+    try {
+      store.save(store.doc)
+    } catch (error) {
+      ctx.logger?.warn?.('dsh-omega: cannot write the initial configuration: %s', error.message)
+    }
+  }
+
+  let discovered = discoverProviders(ctx)
+  let signature = providerSignature(discovered)
+  let table = buildRoutingTable(store.doc, providersForRouting(discovered, extensionOf(store.doc)))
+  const handle = installRouter(table)
+
+  const rebuild = (doc = store.doc) => {
+    table = buildRoutingTable(doc, providersForRouting(discovered, extensionOf(doc)))
+    handle.setTable(table)
+    return table
+  }
+
+  const refreshProviders = () => {
+    discovered = discoverProviders(ctx)
+    const next = providerSignature(discovered)
+    if (next !== signature) {
+      signature = next
+      rebuild()
+    }
+    return joinProviderRows(discovered, extensionOf(store.doc))
+  }
+
+  const documentState = () => ({
+    doc: store.doc,
+    currentProfileName: table.currentProfileName,
+    providers: joinProviderRows(discovered, extensionOf(store.doc)),
+    warnings: [...(store.warnings ?? []), ...table.warnings],
+    summary: summariseDocument(store.doc),
+    version: VERSION,
+  })
+
+  const handlers = {
+    getState: documentState,
+    save(doc) {
+      if (doc === null || typeof doc !== 'object') {
+        throw Object.assign(new Error('doc must be an object'), { status: 400 })
+      }
+      const result = store.save(doc)
+      rebuild(result.doc)
+      return {
+        ...documentState(),
+        warnings: [...result.warnings, ...table.warnings],
+      }
+    },
+    importBackup({ content, mode }) {
+      if (typeof content !== 'string') {
+        throw Object.assign(new Error('content must be a JSON string'), { status: 400 })
+      }
+      const result = importDocument(content, store.doc, mode === 'merge' ? 'merge' : 'replace')
+      store.save(result.doc)
+      rebuild(result.doc)
+      return {
+        ...documentState(),
+        imported: true,
+        mode: result.mode,
+        summary: result.summary,
+        warnings: [...result.warnings, ...table.warnings],
+      }
+    },
+    exportBackup() {
+      return JSON.stringify(exportDocument(store.doc), null, 2)
+    },
+    resolve(rawUrl, candidate) {
+      let url
+      try {
+        url = new URL(rawUrl)
+      } catch {
+        throw Object.assign(new Error('url is not a valid absolute URL'), { status: 400 })
+      }
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        throw Object.assign(new Error('url must use http or https'), { status: 400 })
+      }
+      let active = table
+      if (candidate !== null && typeof candidate === 'object') {
+        let normalized
+        try {
+          normalized = normalizeDocument(candidate).doc
+        } catch (error) {
+          throw Object.assign(error, { status: 400 })
+        }
+        active = buildRoutingTable(normalized, providersForRouting(discovered, extensionOf(normalized)))
+      }
+      return {
+        url: url.href,
+        currentProfileName: active.currentProfileName,
+        draft: candidate !== null && typeof candidate === 'object',
+        ...active.resolve(url),
+      }
+    },
+    refreshProviders,
+  }
+
+  installHttpApi(ctx, handlers)
+
+  let pending
+  const refreshSoon = () => {
+    if (pending !== undefined) return
+    pending = setTimeout(() => {
+      pending = undefined
+      try {
+        refreshProviders()
+      } catch (error) {
+        ctx.logger?.warn?.('dsh-omega: refreshing providers failed: %s', error.message)
+      }
+    }, 250)
+  }
+  ctx.effect(() => {
+    const off = ctx.on?.('llm/adapters-updated', refreshSoon)
+    return () => {
+      off?.()
+      if (pending !== undefined) clearTimeout(pending)
+    }
+  })
+  ctx.inject(['llm'], () => {
+    refreshSoon()
+  })
+
+  ctx.effect(() => () => handle.dispose())
+
+  ctx.logger?.info?.(
+    'dsh-omega %s: %d profiles, current "%s"',
+    VERSION,
+    Object.keys(store.doc).filter(key => key.startsWith('+')).length,
+    table.currentProfileName,
+  )
+}

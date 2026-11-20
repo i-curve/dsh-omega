@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 2,
+  "-startupProfileName": "auto switch",
+  "-enableQuickSwitch": false,
+  "-confirmDeletion": true,
+  "+proxy": {
+    "name": "proxy",
+    "profileType": "FixedProfile",
+    "color": "#99ccee",
+    "fallbackProxy": {
+      "scheme": "http",
+      "host": "127.0.0.1",
+      "port": 7890
+    },
+    "bypassList": [
+      {
+        "conditionType": "BypassCondition",
+        "pattern": "localhost"
+      },
+      {
+        "conditionType": "BypassCondition",
+        "pattern": "*.intranet.example"
+      }
+    ]
+  },
+  "+socks": {
+    "name": "socks",
+    "profileType": "FixedProfile",
+    "color": "#eebb66",
+    "fallbackProxy": {
+      "scheme": "socks5",
+      "host": "127.0.0.1",
+      "port": 1080
+    }
+  },
+  "+auto switch": {
+    "name": "auto switch",
+    "profileType": "SwitchProfile",
+    "color": "#99dd99",
+    "defaultProfileName": "direct",
+    "rules": [
+      {
+        "condition": {
+          "conditionType": "HostWildcardCondition",
+          "pattern": "*.google.com"
+        },
+        "profileName": "proxy"
+      },
+      {
+        "condition": {
+          "conditionType": "HostWildcardCondition",
+          "pattern": "*.intranet.example"
+        },
+        "profileName": "proxy"
+      },
+      {
+        "condition": {
+          "conditionType": "HostWildcardCondition",
+          "pattern": "*.socks.test"
+        },
+        "profileName": "socks"
+      },
+      {
+        "condition": {
+          "conditionType": "HostWildcardCondition",
+          "pattern": "*.loopa.test"
+        },
+        "profileName": "loop-b"
+      }
+    ]
+  },
+  "+loop-a": {
+    "name": "loop-a",
+    "profileType": "SwitchProfile",
+    "defaultProfileName": "loop-b",
+    "rules": []
+  },
+  "+loop-b": {
+    "name": "loop-b",
+    "profileType": "SwitchProfile",
+    "defaultProfileName": "loop-a",
+    "rules": []
+  },
+  "+list": {
+    "name": "list",
+    "profileType": "RuleListProfile",
+    "format": "AutoProxy",
+    "matchProfileName": "proxy",
+    "defaultProfileName": "direct",
+    "ruleList": "||github.com\n@@||direct.example.com\n||other.example.org"
+  },
+  "-dshOmega": {
+    "version": 1,
+    "currentProfileName": "auto switch",
+    "providerBindings": {},
+    "providerHosts": {}
+  }
+}

@@ -1,0 +1,5 @@
+# dsh-omega bundle patch: one Host row owns the proxy routing and serves the
+# settings page's API; the browser half rides the package's `dsh.client`.
+- insert:
+    - id: dsh-omega
+      name: dsh-omega

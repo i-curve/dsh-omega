@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Proxy routing · Omega",
+    "description": "Zero Omega style proxy profiles, automatic switching rules, and per-provider proxy/direct bindings for DSH outbound requests. Imports browser .bak backups."
+  }
+}

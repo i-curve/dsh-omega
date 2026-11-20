@@ -1,0 +1,68 @@
+{
+  "name": "dsh-omega",
+  "version": "0.1.0",
+  "description": "Zero Omega style proxy profiles, automatic switching, and per-model-provider proxy/direct routing for DeepSeek Harness, with .bak import/export.",
+  "type": "module",
+  "license": "MIT",
+  "author": "allcloud",
+  "homepage": "https://github.com/allcloud/dsh-omega#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allcloud/dsh-omega.git"
+  },
+  "bugs": {
+    "url": "https://github.com/allcloud/dsh-omega/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-bundle",
+    "deepseek-harness",
+    "proxy",
+    "zero-omega",
+    "switchyomega",
+    "pac",
+    "cordis"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "locale",
+    "cordis.patch.yml",
+    "docs",
+    "icon.svg",
+    "README.md",
+    "README.zh.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check index.js && node --check client.js && for f in lib/*.js; do node --check \"$f\" || exit 1; done"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
