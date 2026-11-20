@@ -41,6 +41,10 @@ model provider such as `github-copilot` can be pinned to a proxy while
   extension imports directly (flat `+profile` / `-setting` document, including
   AutoProxy and SwitchyOmega rule lists). Export produces the same shape, so
   the file can go back to the browser.
+- **Rule-list subscriptions** — point a rule-list profile at a URL
+  (AutoProxy/GFWList or SwitchyOmega text), update it on demand, and let the
+  host refresh stale lists on an interval. Download or copy any list to host
+  and share it yourself.
 - **Rule tester** — resolve any URL against the current draft and see every
   decision step.
 - **Live apply** — saving swaps the routing table without restarting DSH.
@@ -85,6 +89,17 @@ independently of the switch rules, open **Proxy → Providers**, set
 `github-copilot` to `proxy` and leave the default model on *Follow current
 profile* (or pin it to `direct`).
 
+### Rule-list subscriptions
+
+Open a rule-list profile, paste an AutoProxy or SwitchyOmega list URL, and
+choose **Update now**. The download goes through the same routing table as any
+other request, so a GitHub-hosted list can use the proxy while a local mirror
+stays direct. **Auto-update** (minutes, `0` disables) lets the host refresh
+stale lists in the background.
+
+Every rule-list profile can also be **downloaded or copied** as text. Host that
+file at any reachable URL and use it as a subscription elsewhere.
+
 ## How a request is routed
 
 1. **Loopback** (`localhost`, `127.0.0.0/8`, `::1`) is always direct.
@@ -115,11 +130,11 @@ settings keys; remove it if you want a byte-for-byte browser backup.
 
 Supported: `DirectProfile`, `SystemProfile` (direct in DSH), `FixedProfile`
 (HTTP/HTTPS), `SwitchProfile`, `VirtualProfile`, `RuleListProfile`
-(`AutoProxy` and `Switchy` text), host/URL wildcard and regex, keyword, IP/CIDR,
-and bypass lists.
+(`AutoProxy` and `Switchy` text, with `sourceUrl` subscriptions and
+`lastUpdate`), host/URL wildcard and regex, keyword, IP/CIDR, and bypass lists.
 
-Not supported: SOCKS proxies (`socks4://`, `socks5://`), PAC scripts, remote
-rule-list refresh, and browser-only settings. See
+Not supported: SOCKS proxies (`socks4://`, `socks5://`), PAC scripts, and
+browser-only settings. See
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for the full matrix.
 
 ## Configuration and security

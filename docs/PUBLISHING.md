@@ -85,6 +85,8 @@ Attach the `npm pack` tarball if you want an offline-installable artifact.
 - [ ] Client bundle still loads (`node test/client-load.e2e.mjs`).
 - [ ] A real Zero Omega `.bak` still imports and routes (see
       `docs/COMPATIBILITY.md`).
+- [ ] A URL rule-list subscription still downloads, persists `lastUpdate`, and
+      routes a matching host through the selected profile.
 - [ ] README screenshots/description match the shipped UI.
 - [ ] `SECURITY.md` still describes the actual credential storage.
 - [ ] Installed copy in DSH refreshed and the Settings → Proxy page opens.

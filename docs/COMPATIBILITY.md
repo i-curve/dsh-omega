@@ -13,7 +13,7 @@ may be reported and routed direct.
 | `FixedProfile` | Full (HTTP/HTTPS) | Uses `proxyForHttps` / `proxyForHttp` when present, otherwise `fallbackProxy`. `bypassList` is evaluated first. `auth.all` and per-scheme auth become `Proxy-Authorization: Basic`. |
 | `SwitchProfile` | Full | Rules are evaluated top to bottom; the first match selects another profile; otherwise `defaultProfileName`. |
 | `VirtualProfile` | Full | Treated as a switch profile (rules + default). |
-| `RuleListProfile` / `SwitchyRuleListProfile` / `AutoProxyRuleListProfile` | Text formats | `AutoProxy` and `Switchy` rule-list text are parsed once and cached. `matchProfileName` applies to normal rules, `defaultProfileName` to `@@` / `!` exceptions and to the fallback. |
+| `RuleListProfile` / `SwitchyRuleListProfile` / `AutoProxyRuleListProfile` | Text formats + URL subscriptions | `AutoProxy` and `Switchy` rule-list text are parsed once and cached. `matchProfileName` applies to normal rules, `defaultProfileName` to `@@` / `!` exceptions and to the fallback. `sourceUrl` enables manual and interval-based refresh; `lastUpdate` records the last successful download. |
 | `PacProfile` | Reported | No PAC evaluator. Requests are direct and a warning names the profile. |
 
 SOCKS is not a profile type but a proxy scheme: `socks4` / `socks5` fixed
@@ -70,7 +70,8 @@ regardless of the list.
 |---|---|
 | Browser proxy API per tab | One process-wide dispatcher; the unit is a request URL. |
 | Current profile is extension state | Stored in the document as `-dshOmega.currentProfileName` and mirrored to `-startupProfileName`. |
-| Remote rule-list refresh (`-downloadInterval`) | Not performed; imported text is evaluated as-is. Refresh the list in the browser and re-import. |
+| Remote rule-list refresh (`-downloadInterval`) | Supported for `http(s)` `sourceUrl` lists. The host checks every five minutes and refreshes lists older than the interval; `0` disables it. Downloads follow the current routing, so the list URL can itself use the proxy. |
+| Rule-list publishing | **Download** or **copy** any rule list from the profile editor, host the text yourself, and use that URL as a subscription. There is no built-in hosting service. |
 | PAC scripts | Reported, routed direct. |
 | SOCKS proxies, proxy auth prompts | HTTP/HTTPS only; Basic credentials can be stored in the profile. |
 | Browser quick switch, inspect menu, badges | Browser-only settings are preserved but have no effect. |

@@ -13,6 +13,7 @@ import { buildRoutingTable, summariseDocument } from './lib/profiles.js'
 import { discoverProviders, joinProviderRows, providersForRouting } from './lib/providers.js'
 import { installRouter } from './lib/router.js'
 import { installHttpApi } from './lib/http-api.js'
+import { fetchRuleList as fetchRemoteRuleList } from './lib/rulelist-source.js'
 
 function readVersion() {
   try {
@@ -73,8 +74,47 @@ export function apply(ctx) {
     file: configPath(),
   })
 
+  const refreshRuleLists = async (force = false) => {
+    const intervalMinutes = Number(store.doc['-downloadInterval'] ?? 0)
+    if (!force && (!Number.isFinite(intervalMinutes) || intervalMinutes <= 0)) {
+      return { updated: 0, failed: 0, skipped: true }
+    }
+    const entries = Object.entries(store.doc).filter(([key, value]) => key.startsWith('+')
+      && value !== null && typeof value === 'object'
+      && value.profileType === 'RuleListProfile'
+      && typeof value.sourceUrl === 'string' && value.sourceUrl.trim() !== '')
+    if (entries.length === 0) return { updated: 0, failed: 0, skipped: true }
+    const candidate = { ...store.doc }
+    let updated = 0
+    const errors = []
+    for (const [key, profile] of entries) {
+      const last = Date.parse(profile.lastUpdate ?? '')
+      if (!force && Number.isFinite(last) && Date.now() - last < intervalMinutes * 60_000) continue
+      try {
+        const result = await fetchRemoteRuleList(profile.sourceUrl)
+        candidate[key] = {
+          ...profile,
+          sourceUrl: result.url,
+          ruleList: result.content,
+          lastUpdate: result.lastUpdate,
+        }
+        updated += 1
+      } catch (error) {
+        errors.push({ profile: profile.name ?? key.slice(1), message: error.message })
+        ctx.logger?.warn?.('dsh-omega: rule list %s failed: %s', profile.name ?? key.slice(1), error.message)
+      }
+    }
+    if (updated > 0) {
+      store.save(candidate)
+      rebuild()
+    }
+    return { updated, failed: errors.length, errors }
+  }
+
   const handlers = {
     getState: documentState,
+    fetchRuleList: rawUrl => fetchRemoteRuleList(rawUrl),
+    refreshRuleLists: () => refreshRuleLists(true),
     save(doc) {
       if (doc === null || typeof doc !== 'object') {
         throw Object.assign(new Error('doc must be an object'), { status: 400 })
@@ -159,6 +199,30 @@ export function apply(ctx) {
   })
   ctx.inject(['llm'], () => {
     refreshSoon()
+  })
+
+  let refreshingRuleLists = false
+  const autoRefreshRuleLists = async () => {
+    if (refreshingRuleLists) return
+    refreshingRuleLists = true
+    try {
+      const result = await refreshRuleLists()
+      if (result.updated > 0) {
+        ctx.logger?.info?.('dsh-omega: refreshed %d rule list(s)', result.updated)
+      }
+    } catch (error) {
+      ctx.logger?.warn?.('dsh-omega: rule list refresh failed: %s', error.message)
+    } finally {
+      refreshingRuleLists = false
+    }
+  }
+  ctx.effect(() => {
+    const first = setTimeout(autoRefreshRuleLists, 10_000)
+    const timer = setInterval(autoRefreshRuleLists, 5 * 60_000)
+    return () => {
+      clearTimeout(first)
+      clearInterval(timer)
+    }
   })
 
   ctx.effect(() => () => handle.dispose())

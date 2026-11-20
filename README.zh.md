@@ -33,6 +33,9 @@ SwitchyOmega 的情景模式与规则词汇，并额外加了一层 DSH 绑定�
 - **Zero Omega 格式导入 / 导出**：浏览器扩展导出的 `.bak` 可以直接导入（扁平
   `+profile` / `-setting` 文档，包含 AutoProxy 与 SwitchyOmega 规则列表）；导出也是
   同样的形状，可以带回浏览器。
+- **规则列表订阅**：给规则列表情景模式填一个 URL（AutoProxy/GFWList 或
+  SwitchyOmega 文本），随时更新，也可以让宿主按间隔自动刷新；列表可以下载或
+  复制出来，自己托管分享。
 - **规则测试**：对当前草稿解析任意 URL，逐步显示判定过程。
 - **即时生效**：保存后直接替换路由表，不需要重启 DSH。
 - **中英双语界面**。
@@ -74,6 +77,16 @@ npm test
 自动切换规则影响，在 **代理 → 模型提供商** 里把 `github-copilot` 设为 `proxy`，
 默认模型保持“跟随当前情景模式”（或固定为 `direct`）。
 
+### 规则列表订阅
+
+打开一个规则列表情景模式，填入 AutoProxy 或 SwitchyOmega 列表的 URL，点
+**立即更新**。下载请求和普通请求走同一张路由表，所以 GitHub 上的列表可以走
+代理，本机镜像保持直连。**自动更新间隔**（分钟，`0` 关闭）会让宿主在后台刷新
+过期列表。
+
+规则列表也可以**下载或复制**成文本，放到任意可访问的 URL 后就能作为订阅地址
+分享。
+
 ## 路由判定顺序
 
 1. **本机地址**（`localhost`、`127.0.0.0/8`、`::1`）始终直连。
@@ -103,11 +116,10 @@ npm test
 
 支持：`DirectProfile`、`SystemProfile`（在 DSH 中按直连）、`FixedProfile`
 （HTTP/HTTPS）、`SwitchProfile`、`VirtualProfile`、`RuleListProfile`
-（`AutoProxy` 与 `Switchy` 文本）、域名/URL 通配与正则、关键词、IP/CIDR、bypass
-列表。
+（`AutoProxy` 与 `Switchy` 文本，支持 `sourceUrl` 订阅与 `lastUpdate`）、
+域名/URL 通配与正则、关键词、IP/CIDR、bypass 列表。
 
-不支持：SOCKS 代理（`socks4://`、`socks5://`）、PAC 脚本、规则列表在线更新，以及
-浏览器专属设置。完整矩阵见 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)。
+不支持：SOCKS 代理（`socks4://`、`socks5://`）、PAC 脚本，以及浏览器专属设置。完整矩阵见 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)。
 
 ## 配置与安全
 

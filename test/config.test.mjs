@@ -86,6 +86,19 @@ test('invalid JSON throws a typed failure', () => {
   assert.throws(() => normalizeDocument('{nope'), error => error.code === 'invalid-json')
 })
 
+test('rule-list subscription metadata survives import and export', () => {
+  const raw = JSON.parse(fixtureText)
+  raw['+list'].sourceUrl = 'https://example.com/rules.txt'
+  raw['+list'].lastUpdate = '2026-01-01T00:00:00.000Z'
+  raw['-downloadInterval'] = 1440
+  const { doc } = normalizeDocument(raw)
+  assert.equal(doc['+list'].sourceUrl, 'https://example.com/rules.txt')
+  assert.equal(doc['+list'].lastUpdate, '2026-01-01T00:00:00.000Z')
+  const exported = exportDocument(doc)
+  assert.equal(exported['+list'].sourceUrl, 'https://example.com/rules.txt')
+  assert.equal(exported['-downloadInterval'], 1440)
+})
+
 test('a normalised fixture routes github through its proxy', () => {
   const { doc } = normalizeDocument(fixtureText)
   const table = buildRoutingTable(doc, [])

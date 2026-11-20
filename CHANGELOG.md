@@ -11,6 +11,12 @@
 - Per-model-provider bindings with detected hosts and manual overrides.
 - Live routing-table replacement through the process-wide undici dispatcher.
 - Zero Omega `.bak` import (replace or merge) and export.
+- Rule-list URL subscriptions: `sourceUrl` + `lastUpdate`, manual **Update now**,
+  and host-side auto-refresh controlled by `-downloadInterval`.
+- **Download list** / **Copy list** actions for publishing a rule list at any
+  URL and subscribing to it elsewhere.
+- Default automatic switching also covers `raw.githubusercontent.com` and
+  `gist.githubusercontent.com` so GitHub-hosted lists work through the proxy.
 - Settings → Proxy page with profile editor, rule editor, provider bindings,
   rule tester, and import/export.
 - English and Simplified Chinese copy.

@@ -13,6 +13,12 @@ content types, every request must come from a loopback peer, and the page state
 never returns proxy passwords. On a Web deployment bound to a LAN, use the
 host machine (or a tunnel) for configuration.
 
+A rule-list subscription is a user-supplied `http(s)` URL that the host
+downloads with the current routing. Treat a URL you do not control as untrusted
+input: it can be used to make the host request an internal address (SSRF), and
+the fetched text becomes routing rules. The download is capped at 16 MiB and
+times out after 30 seconds, but it is not sandboxed beyond that.
+
 Proxy credentials entered in the UI are stored in plain text in
 `$DSH_HOME/dsh-omega/config.json` with mode `0600`. For shared machines prefer a
 credentialless loopback listener; use OS-level file permissions for anything

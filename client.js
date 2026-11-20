@@ -55,6 +55,21 @@ window.__ModuleLoader__.load({
         unsupported: 'DSH cannot evaluate this profile type; requests fall back to direct.',
         ruleList: 'Rule list',
         ruleListHint: 'AutoProxy (GFWList) and SwitchyOmega rule-list text are supported.',
+        ruleListUrl: 'Rule list URL',
+        ruleListUrlHint: 'Download an AutoProxy or SwitchyOmega list from this URL. The download follows the current routing, so a GitHub-hosted list can go through the proxy.',
+        updateNow: 'Update now',
+        updating: 'Downloading…',
+        sourceRequired: 'Enter a rule list URL first.',
+        updateSuccess: 'Updated: {count} lines ({bytes} bytes). Save to apply.',
+        lastUpdated: 'Last updated',
+        neverUpdated: 'never',
+        ruleListReadonly: 'This list has a source URL, so its text is read-only. Use Update now, or switch to manual editing.',
+        clearSource: 'Edit manually',
+        exportRuleList: 'Download list',
+        copyRuleList: 'Copy list',
+        publishHint: 'Host the downloaded list at any reachable URL to share it as a subscription.',
+        autoUpdateInterval: 'Auto-update (minutes, 0 = off)',
+        autoUpdateHint: 'A global setting shared by every rule-list profile. The host refreshes stale lists in the background; 0 disables it.',
         format: 'Format',
         matchProfile: 'Matched rules use',
         directNote: 'Direct connection. No proxy is used for requests resolved to this profile.',
@@ -224,6 +239,21 @@ window.__ModuleLoader__.load({
         unsupported: 'DSH 无法执行这种情景模式，请求会按直连处理。',
         ruleList: '规则列表',
         ruleListHint: '支持 AutoProxy（GFWList）和 SwitchyOmega 规则列表文本。',
+        ruleListUrl: '规则列表网址',
+        ruleListUrlHint: '从这个 URL 下载 AutoProxy / SwitchyOmega 规则列表；下载遵循当前路由，GitHub 上的列表可以走代理。',
+        updateNow: '立即更新',
+        updating: '正在下载…',
+        sourceRequired: '请先填写规则列表网址。',
+        updateSuccess: '已更新：{count} 行（{bytes} 字节）。保存后生效。',
+        lastUpdated: '上次更新',
+        neverUpdated: '从未',
+        ruleListReadonly: '已有来源网址，列表内容只读；用“立即更新”刷新，或改为手动编辑。',
+        clearSource: '改为手动编辑',
+        exportRuleList: '下载规则列表',
+        copyRuleList: '复制规则列表',
+        publishHint: '把下载/复制的列表放到任意可访问的 URL，就能作为订阅地址分享。',
+        autoUpdateInterval: '自动更新间隔（分钟，0 关闭）',
+        autoUpdateHint: '这是全局设置，所有规则列表共用；宿主会定期刷新过期列表，0 表示不自动刷新。',
         format: '格式',
         matchProfile: '命中的规则使用',
         directNote: '直接连接。命中此情景模式的请求不会走代理。',
@@ -954,14 +984,51 @@ window.__ModuleLoader__.load({
           }, t('addRule'))))
     }
 
-    function RuleListProfileEditor({ t, doc, row, update }) {
+    function RuleListProfileEditor({ t, doc, row, update, setNotice }) {
       const profile = row.profile
       const names = allProfileNames(doc)
       const setProfile = (patch) => update(doc, (draft) => { Object.assign(draft[`+${row.name}`], patch) })
-      const lines = String(profile.ruleList ?? '').split('\n').filter(line => {
+      const setIntervalMinutes = (value) => update(doc, (draft) => { draft['-downloadInterval'] = value })
+      const [sourceDraft, setSourceDraft] = useState(profile.sourceUrl ?? '')
+      const [busy, setBusy] = useState(false)
+      const [error, setError] = useState('')
+      useEffect(() => { setSourceDraft(profile.sourceUrl ?? ''); setError('') }, [row.name])
+      const hasSource = typeof profile.sourceUrl === 'string' && profile.sourceUrl.trim() !== ''
+      const lines = String(profile.ruleList ?? '').split('\n').filter((line) => {
         const value = line.trim()
         return value !== '' && value[0] !== ';' && value[0] !== '!' && value[0] !== '[' && !value.startsWith('@note')
       }).length
+      const lastUpdate = typeof profile.lastUpdate === 'string' && profile.lastUpdate !== ''
+        ? (() => { try { return new Date(profile.lastUpdate).toLocaleString() } catch { return profile.lastUpdate } })()
+        : t('neverUpdated')
+      const updateFromUrl = async () => {
+        const target = sourceDraft.trim() || profile.sourceUrl || ''
+        if (target === '') { setError(t('sourceRequired')); return }
+        setBusy(true)
+        setError('')
+        try {
+          const result = await api('/rulelist/fetch', { method: 'POST', body: JSON.stringify({ url: target }) })
+          setSourceDraft(result.url)
+          setProfile({ sourceUrl: result.url, ruleList: result.content, lastUpdate: result.lastUpdate })
+          const count = String(result.content).split('\n').filter(line => line.trim() !== '').length
+          setNotice?.(t('updateSuccess', { count, bytes: result.bytes }))
+        } catch (failure) {
+          setError(failure.message)
+        } finally {
+          setBusy(false)
+        }
+      }
+      const download = () => {
+        const blob = new Blob([profile.ruleList ?? ''], { type: 'text/plain;charset=utf-8' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = `${row.name}.txt`
+        link.click()
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000)
+      }
+      const copy = async () => {
+        try { await navigator.clipboard.writeText(profile.ruleList ?? ''); setNotice?.(t('copied')) } catch { setError(t('clipboardError')) }
+      }
       return h('div', { className: 'omega-card' },
         h('div', { className: 'omega-cardHead' },
           h('span', { className: 'omega-dot', style: { background: profile.color } }),
@@ -983,13 +1050,39 @@ window.__ModuleLoader__.load({
               className: 'omega-select', value: profile.defaultProfileName ?? 'direct',
               onChange: event => setProfile({ defaultProfileName: event.target.value }),
             }, names.map(name => h('option', { key: name, value: name }, name))))),
+        h('div', { className: 'omega-io' },
+          h(Field, { label: t('ruleListUrl') },
+            h('div', { className: 'omega-split' },
+              h('input', {
+                className: 'omega-input omega-grow', type: 'url', value: sourceDraft,
+                placeholder: 'https://example.com/rules.txt',
+                onChange: event => setSourceDraft(event.target.value),
+                onBlur: () => setProfile({ sourceUrl: sourceDraft.trim() }),
+              }),
+              h(Button, { onClick: updateFromUrl, disabled: busy }, busy ? t('updating') : t('updateNow')),
+              hasSource ? h(Button, { onClick: () => { setSourceDraft(''); setProfile({ sourceUrl: '' }) } }, t('clearSource')) : null)),
+            h('span', { className: 'omega-muted' }, t('ruleListUrlHint')),
+            h('span', { className: 'omega-muted' }, `${t('lastUpdated')}: ${lastUpdate}`),
+          error !== '' ? h('div', { className: 'omega-banner error', role: 'alert' }, error) : null),
         h(Field, { label: t('ruleList') },
           h('textarea', {
-            className: 'omega-textarea', rows: 10, value: profile.ruleList ?? '',
+            className: 'omega-textarea', rows: 10, value: profile.ruleList ?? '', readOnly: hasSource,
             placeholder: '||example.com\n*.example.net',
             onChange: event => setProfile({ ruleList: event.target.value }),
           }),
-          h('span', { className: 'omega-muted' }, t('ruleListHint'))))
+          h('span', { className: 'omega-muted' }, hasSource ? t('ruleListReadonly') : t('ruleListHint'))),
+        h('div', { className: 'omega-split' },
+          h(Button, { small: true, onClick: download, disabled: lines === 0 }, t('exportRuleList')),
+          h(Button, { small: true, onClick: copy, disabled: lines === 0 }, t('copyRuleList')),
+          h('span', { className: 'omega-muted omega-grow' }, t('publishHint'))),
+        h('div', { className: 'omega-row' },
+          h(Field, { label: t('autoUpdateInterval'), className: 'omega-col-4' },
+            h('input', {
+              className: 'omega-input', type: 'number', min: 0, step: 1,
+              value: doc['-downloadInterval'] ?? 0,
+              onChange: event => setIntervalMinutes(event.target.value === '' ? 0 : Math.max(0, Number(event.target.value))),
+            })),
+          h('span', { className: 'omega-muted omega-col-8' }, t('autoUpdateHint'))))
     }
 
     function UnsupportedProfileEditor({ t, row }) {
@@ -1374,7 +1467,7 @@ window.__ModuleLoader__.load({
               t, row: { name: selection.name, builtin: false }, profile,
               onRename: rename, onDelete: remove, canDelete: true,
             })),
-          h(RuleListProfileEditor, { t, doc, row: { name: selection.name, profile }, update: (_, mutate) => updateProfile(mutate) }))
+          h(RuleListProfileEditor, { t, doc, row: { name: selection.name, profile }, update: (_, mutate) => updateProfile(mutate), setNotice }))
       } else {
         profileContent = h(React.Fragment, null,
           h('div', { className: 'omega-card' },
