@@ -1,6 +1,6 @@
 {
   "name": "dsh-omega",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Zero Omega style proxy profiles, automatic switching, and per-model-provider proxy/direct routing for DeepSeek Harness, with .bak import/export.",
   "type": "module",
   "license": "MIT",
