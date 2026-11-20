@@ -15,6 +15,8 @@
   and host-side auto-refresh controlled by `-downloadInterval`.
 - **Download list** / **Copy list** actions for publishing a rule list at any
   URL and subscribing to it elsewhere.
+- **Export as rule list** on an automatic-switch profile, producing a
+  SwitchyOmega list from its rules.
 - Default automatic switching also covers `raw.githubusercontent.com` and
   `gist.githubusercontent.com` so GitHub-hosted lists work through the proxy.
 - Settings → Proxy page with profile editor, rule editor, provider bindings,

@@ -97,8 +97,10 @@ other request, so a GitHub-hosted list can use the proxy while a local mirror
 stays direct. **Auto-update** (minutes, `0` disables) lets the host refresh
 stale lists in the background.
 
-Every rule-list profile can also be **downloaded or copied** as text. Host that
-file at any reachable URL and use it as a subscription elsewhere.
+Every rule-list profile can also be **downloaded or copied** as text, and an
+automatic-switch profile has **Export as rule list** to turn its rules into a
+SwitchyOmega list. Host that file at any reachable URL and use it as a
+subscription elsewhere.
 
 ## How a request is routed
 

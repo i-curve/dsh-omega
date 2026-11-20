@@ -67,6 +67,7 @@ window.__ModuleLoader__.load({
         ruleListReadonly: 'This list has a source URL, so its text is read-only. Use Update now, or switch to manual editing.',
         clearSource: 'Edit manually',
         exportRuleList: 'Download list',
+        exportAsRuleList: 'Export as rule list',
         copyRuleList: 'Copy list',
         publishHint: 'Host the downloaded list at any reachable URL to share it as a subscription.',
         autoUpdateInterval: 'Auto-update (minutes, 0 = off)',
@@ -252,6 +253,7 @@ window.__ModuleLoader__.load({
         ruleListReadonly: '已有来源网址，列表内容只读；用“立即更新”刷新，或改为手动编辑。',
         clearSource: '改为手动编辑',
         exportRuleList: '下载规则列表',
+        exportAsRuleList: '导出为规则列表',
         copyRuleList: '复制规则列表',
         publishHint: '把下载/复制的列表放到任意可访问的 URL，就能作为订阅地址分享。',
         autoUpdateInterval: '自动更新间隔（分钟，0 关闭）',
@@ -868,6 +870,33 @@ window.__ModuleLoader__.load({
           h('span', { className: 'omega-muted' }, t('bypassHint'))))
     }
 
+    function conditionToLine(condition) {
+      const type = condition?.conditionType
+      const pattern = condition?.pattern ?? ''
+      switch (type) {
+        case 'HostWildcardCondition':
+          return pattern
+        case 'HostRegexCondition':
+          return `HostRegexCondition: ${pattern}`
+        case 'UrlWildcardCondition':
+          return `UrlWildcardCondition: ${pattern}`
+        case 'UrlRegexCondition':
+          return `UrlRegexCondition: ${pattern}`
+        case 'KeywordCondition':
+          return `KeywordCondition: ${pattern}`
+        case 'IpCondition': {
+          const prefix = condition.prefixLength ?? (String(condition.ip ?? '').includes(':') ? 128 : 32)
+          return `IpCondition: ${condition.ip ?? ''}/${prefix}`
+        }
+        case 'TrueCondition':
+          return 'True'
+        case 'FalseCondition':
+          return 'False'
+        default:
+          return pattern
+      }
+    }
+
     function ruleProblem(t, rule) {
       const condition = rule?.condition
       if (condition === null || typeof condition !== 'object') return t('invalidRule')
@@ -931,6 +960,19 @@ window.__ModuleLoader__.load({
         if (!Array.isArray(target.rules)) target.rules = []
         mutate(target.rules, target)
       })
+      const exportRules = () => {
+        const lines = ['[SwitchyOmega Conditions]', '@with result', '']
+        for (const rule of rules) {
+          lines.push(`${conditionToLine(rule.condition)} +${rule.profileName ?? 'direct'}`)
+        }
+        lines.push('', `* +${profile.defaultProfileName ?? 'direct'}`)
+        const blob = new Blob([`${lines.join('\n')}\n`], { type: 'text/plain;charset=utf-8' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = `${row.name}.txt`
+        link.click()
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000)
+      }
       return h('div', { className: 'omega-card' },
         h('div', { className: 'omega-cardHead' },
           h('span', { className: 'omega-dot', style: { background: profile.color } }),
@@ -998,7 +1040,8 @@ window.__ModuleLoader__.load({
             onClick: () => setRules(list => {
               list.push({ condition: { conditionType: 'HostWildcardCondition', pattern: '' }, profileName: 'direct' })
             }),
-          }, t('addRule'))))
+          }, t('addRule')),
+          h(Button, { small: true, disabled: rules.length === 0, onClick: exportRules }, t('exportAsRuleList'))))
     }
 
     function RuleListProfileEditor({ t, doc, row, update, setNotice }) {
