@@ -94,8 +94,8 @@ profile* (or pin it to `direct`).
 Create one with **+ Rule list**, paste an AutoProxy or SwitchyOmega list URL,
 and choose **Update now**. The download goes through the same routing table as any
 other request, so a GitHub-hosted list can use the proxy while a local mirror
-stays direct. **Auto-update** (minutes, `0` disables) lets the host refresh
-stale lists in the background.
+stays direct. **Auto-update** (minutes, default `1440` = once a day, `0` disables) lets the
+host refresh stale lists in the background.
 
 Every rule-list profile can also be **downloaded or copied** as text, and an
 automatic-switch profile has **Export as rule list** to turn its rules into a
